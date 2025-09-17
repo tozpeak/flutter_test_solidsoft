@@ -35,7 +35,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
   Color bgColor = Colors.white;
 
-  void _incrementCounter() {
+  void _updateColor() {
     setState(() {
 
       // can use Color.fromARGB(...) as well to be more readable, 
@@ -50,18 +50,16 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ColoredBox(
-        color: bgColor,
-        child: const Center(
-          child: Text(
-            'Hello there',
+      body: GestureDetector(
+        onTap: _updateColor,
+        child: ColoredBox(
+          color: bgColor,
+          child: const Center(
+            child: Text(
+              'Hello there',
+            ),
           ),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
       ),
     );
   }
