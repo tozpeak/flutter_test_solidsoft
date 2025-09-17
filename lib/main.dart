@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 void main() {
@@ -30,33 +32,30 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  Random random = Random();
+  Color bgColor = Colors.white;
 
   void _incrementCounter() {
     setState(() {
-      _counter++;
+
+      // can use Color.fromARGB(...) as well to be more readable, 
+      // but this way random.nextInt is called only once
+      bgColor = Color(
+          0xFF000000 //max alpha
+          + random.nextInt( 1<<24 ) //random 0x00RRGGBB
+        );
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ],
+      body: ColoredBox(
+        color: bgColor,
+        child: const Center(
+          child: Text(
+            'Hello there',
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
