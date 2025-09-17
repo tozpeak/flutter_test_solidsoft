@@ -31,20 +31,55 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
-  Random random = Random();
-  Color bgColor = Colors.white;
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+  static const Color defaultBgColor = Colors.white;
+
+  final Random _random = Random();
+  late AnimationController _controller;
+  late Animation<Color?> _colorAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: Duration(seconds: 1),
+    );
+
+    _startNewColorAnimation(
+      defaultBgColor, 
+      defaultBgColor
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _updateColor() {
-    setState(() {
+    Color currentBgColor = _colorAnimation.value ?? defaultBgColor;
 
-      // can use Color.fromARGB(...) as well to be more readable, 
-      // but this way random.nextInt is called only once
-      bgColor = Color(
-          0xFF000000 //max alpha
-          + random.nextInt( 1<<24 ) //random 0x00RRGGBB
-        );
-    });
+    // can use Color.fromARGB(...) as well to be more readable, 
+    // but this way random.nextInt is called only once
+    Color newBgColor = Color(
+      0xFF000000 //max alpha
+      + _random.nextInt( 1<<24 ) //random 0x00RRGGBB
+    );
+
+    _startNewColorAnimation(currentBgColor, newBgColor);
+  }
+
+  void _startNewColorAnimation(Color begin, Color end) {
+    _colorAnimation = ColorTween(
+      begin: begin,
+      end: end,
+    ).animate(_controller);
+
+    _controller
+    ..reset()
+    ..forward();
   }
 
   @override
@@ -52,8 +87,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       body: GestureDetector(
         onTap: _updateColor,
-        child: ColoredBox(
-          color: bgColor,
+        child: AnimatedBuilder(
+          animation: _colorAnimation,
+          builder: (context, child) {
+            return ColoredBox(
+              color: _colorAnimation.value ?? defaultBgColor,
+              child: child,
+            );
+          },
           child: const Center(
             child: Text(
               'Hello there',
