@@ -95,13 +95,10 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               child: child,
             );
           },
-          child: const Center(
+          child: Center(
             child: Text(
               'Hello there',
-              // can use Theme.of(context).textTheme.headlineLarge
-              // but having const style allows us to have const Center
-              // thus not rebuilding the whole tree
-              style: TextStyle(fontSize: 42),
+              style: Theme.of(context).textTheme.headlineLarge,
             ),
           ),
         ),
