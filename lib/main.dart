@@ -61,14 +61,24 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   void _updateColor() {
     Color currentBgColor = _colorAnimation.value ?? defaultBgColor;
 
-    // can use Color.fromARGB(...) as well to be more readable, 
-    // but this way random.nextInt is called only once
-    Color newBgColor = Color(
-      0xFF000000 //max alpha
-      + _random.nextInt( 1<<24 ) //random 0x00RRGGBB
-    );
+    Color newBgColor = _getRandomColor();
 
     _startNewColorAnimation(currentBgColor, newBgColor);
+
+    setState(() {
+      //update letter colors as well
+    });
+  }
+
+  Color _getRandomColor() {
+    // can use Color.fromARGB(...) as well to be more readable, 
+    // but this way random.nextInt is called only once
+    return Color.fromRGBO(
+    _random.nextInt(256), 
+    _random.nextInt(256), 
+    _random.nextInt(256), 
+    _random.nextInt(256) / 255
+  );
   }
 
   void _startNewColorAnimation(Color begin, Color end) {
@@ -96,9 +106,26 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             );
           },
           child: Center(
-            child: Text(
+            /*child: Text(
               'Hello there',
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: Theme.of(context)
+                .textTheme
+                .headlineLarge
+                ?.copyWith(color: _textColor),
+            ),*/
+            child: RichText(
+              text: TextSpan(
+                children: 
+                  'Hello there'
+                  .split('')
+                  .map<TextSpan>(
+                    (s) => TextSpan(
+                      text: s,
+                      style: TextStyle(color: _getRandomColor()),
+                    ),
+                  )
+                  .toList(),
+              ),
             ),
           ),
         ),
